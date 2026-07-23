@@ -1,0 +1,26 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Registro - Smart Training</title>
+    <link rel="stylesheet" href="{% static 'css/estilos.css' %}">
+</head>
+
+<body>
+    <div class="auth-container">
+        <div class="auth-card">
+            <h2>Crear Cuenta</h2>
+            <form method="POST" class="auth-form">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn-suscribir">Registrarme</button>
+            </form>
+            <p class="auth-link">¿Ya tienes cuenta? <a href="{% url 'login' %}">Inicia sesión aquí</a></p>
+            <p class="auth-link"><a href="{% url 'inicio' %}">Volver al inicio</a></p>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,59 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Training - Tu Gimnasio</title>
+    <!-- Conectamos el CSS -->
+    <link rel="stylesheet" href="{% static 'css/estilos.css' %}">
+</head>
+
+<body>
+    <header class="header">
+        <nav class="nav-bar">
+            <h1>Smart Training</h1>
+            <ul class="nav-links">
+                <li><a href="#">Inicio</a></li>
+                <li><a href="#">Tienda</a></li>
+                {% if user.is_authenticated %}
+                <li><a href="#">Hola, {{ user.username }}</a></li>
+                <li><a href="{% url 'logout' %}">Cerrar Sesión</a></li>
+                {% else %}
+                <li><a href="{% url 'login' %}">Ingresar</a></li>
+                <li><a href="{% url 'registro' %}">Registrarse</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </header>
+
+    <main class="main-content">
+        <section class="hero">
+            <h2>Bienvenido a tu mejor versión</h2>
+            <p>Ubicados en el centro de la ciudad. Horario: Lunes a Domingo de 6:00 AM a 10:00 PM.</p>
+        </section>
+
+        <section class="planes-section">
+            <h3>Nuestros Planes</h3>
+
+            <div class="planes-grid">
+                <!-- Bucle for de Django para imprimir las tarjetas dinámicamente -->
+                {% for plan in planes %}
+                <div class="plan-card">
+                    <h4>{{ plan.nombre }}</h4>
+                    <p class="precio">${{ plan.precio }}</p>
+                    <p class="descripcion">{{ plan.descripcion }}</p>
+                    <p class="duracion">Válido por: {{ plan.duracion_dias }} días</p>
+                    <button class="btn-suscribir">Suscribirme</button>
+                </div>
+                {% empty %}
+                <p>No hay planes disponibles por el momento.</p>
+                {% endfor %}
+            </div>
+
+        </section>
+    </main>
+</body>
+
+</html>

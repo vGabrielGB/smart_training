@@ -6,11 +6,5 @@ env/
 __pycache__/
 *.py[cod]
 
-# Base de datos local (Opcional, pero recomendado)
-# Nota: Si quieres que tu compañero tenga los mismos datos de prueba 
-# que tú guardes, puedes borrar esta línea por ahora, pero en 
-# un entorno profesional siempre se ignora.
-db.sqlite3
-
 # Variables de entorno
 .env

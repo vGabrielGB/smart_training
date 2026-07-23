@@ -47,9 +47,8 @@ class Suscripcion(models.Model):
     def __str__(self):
         return f"{self.usuario.username} - {self.plan.nombre} ({self.get_estado_display()})"
 
-    # Aplicando la buena práctica de tu profesor para automatizar procesos
     def save(self, *args, **kwargs):
-        # Si el gerente activa la suscripción y define la fecha de inicio, calculamos el vencimiento automáticamente
+        # Si el gerente activa la suscripción y define la fecha de inicio, se calcula el vencimiento automáticamente
         if self.estado == 'activa' and self.fecha_inicio and not self.fecha_fin:
             self.fecha_fin = self.fecha_inicio + timedelta(days=self.plan.duracion_dias)
         super().save(*args, **kwargs)

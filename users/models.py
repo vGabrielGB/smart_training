@@ -20,7 +20,7 @@ class CustomUser(AbstractUser):
         rol = "Gerente" if self.is_manager else "Entrenador" if self.is_trainer else "Cliente"
         return f"{self.username} - {rol}"
 
-# Aquí aplicamos tu idea de separar los datos específicos:
+# Aquí separamos los datos específicos:
 class PerfilCliente(models.Model):
     # Se conecta 1 a 1 con el CustomUser
     usuario = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='perfil_cliente')

@@ -15,12 +15,15 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from memberships.views import inicio
 
 urlpatterns = [
-    path('admin/', admin.site.admin_site.urls if hasattr(admin.site, 'admin_site') else admin.site.urls),
+    path('admin/', admin.site.urls),
+    path('', inicio, name='inicio'),
+    path('usuarios/', include('users.urls')),
 ]
 
 # Esto le permite a Django servir las imágenes de capturas y productos localmente

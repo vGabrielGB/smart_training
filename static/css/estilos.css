@@ -1,0 +1,175 @@
+/* Reset básico para limpiar márgenes del navegador */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #f8fafc;
+    color: #334155;
+}
+
+/* Header y Barra de Navegación */
+.header {
+    background-color: #0f172a;
+    color: #ffffff;
+    padding: 1.2rem 2rem;
+}
+
+.nav-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 2rem;
+}
+
+.nav-links a {
+    color: #e2e8f0;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s;
+}
+
+.nav-links a:hover {
+    color: #38bdf8;
+}
+
+/* Banner de bienvenida */
+.hero {
+    text-align: center;
+    padding: 5rem 1rem;
+    background-color: #e2e8f0;
+    margin-bottom: 3rem;
+}
+
+.hero h2 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    color: #0f172a;
+}
+
+/* Sección de Planes */
+.planes-section {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem 4rem 1rem;
+    text-align: center;
+}
+
+.planes-section h3 {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+}
+
+/* Magia del CSS Grid: Automáticamente hace que quepan las tarjetas */
+.planes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+}
+
+.plan-card {
+    background: #ffffff;
+    border-radius: 10px;
+    padding: 2rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+    border-top: 5px solid #38bdf8;
+}
+
+.plan-card:hover {
+    transform: translateY(-8px);
+}
+
+.plan-card h4 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.precio {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #0ea5e9;
+    margin: 1rem 0;
+}
+
+.descripcion {
+    color: #64748b;
+    margin-bottom: 1.5rem;
+    min-height: 50px;
+}
+
+.btn-suscribir {
+    background-color: #0ea5e9;
+    color: white;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 6px;
+    cursor: pointer;
+    width: 100%;
+    font-size: 1rem;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+.btn-suscribir:hover {
+    background-color: #0284c7;
+}
+
+/* Estilos para Formularios de Autenticación */
+.auth-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #e2e8f0;
+}
+
+.auth-card {
+    background: white;
+    padding: 2.5rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+}
+
+.auth-card h2 {
+    margin-bottom: 1.5rem;
+    color: #0f172a;
+}
+
+.auth-form p {
+    text-align: left;
+    margin-bottom: 1rem;
+}
+
+.auth-form input {
+    width: 100%;
+    padding: 0.8rem;
+    margin-top: 0.3rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+.auth-link {
+    margin-top: 1.5rem;
+    font-size: 0.9rem;
+}
+
+.auth-link a {
+    color: #0ea5e9;
+    text-decoration: none;
+    font-weight: bold;
+}
