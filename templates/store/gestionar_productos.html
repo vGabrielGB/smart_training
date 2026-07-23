@@ -1,0 +1,173 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestionar Productos - Smart Training</title>
+    <link rel="stylesheet" href="{% static 'css/estilos.css' %}">
+    <style>
+        .container { max-width: 1000px; margin: 2rem auto; padding: 2rem; background: white; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+        .form-group { margin-bottom: 1.5rem; text-align: left; }
+        .form-group label { display: block; margin-bottom: 0.5rem; font-weight: bold; }
+        .form-input, .form-file-input { width: 100%; padding: 0.75rem; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        .btn-submit { background-color: #2563eb; color: white; padding: 0.75rem 1.5rem; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        .btn-danger { background-color: #ef4444; color: white; padding: 0.5rem 1rem; border: none; border-radius: 4px; cursor: pointer; }
+        table { width: 100%; border-collapse: collapse; margin-top: 2rem; }
+        th, td { padding: 1rem; border-bottom: 1px solid #e5e7eb; text-align: left; }
+        th { background-color: #f9fafb; }
+        .messages { list-style: none; padding: 0; }
+        .messages li { padding: 1rem; margin-bottom: 1rem; border-radius: 4px; background-color: #d1fae5; color: #065f46; }
+    </style>
+</head>
+<body style="background-color: #f3f4f6; margin:0; font-family: sans-serif;">
+    {% include 'includes/navbar_gerente.html' %}
+
+    <div class="container">
+        <h2>Gestionar Productos</h2>
+        
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        <div style="background: #f9fafb; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem;">
+            <h3>Agregar Nuevo Producto</h3>
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="hidden" name="crear" value="1">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-group">
+                        <label>Nombre</label>
+                        {{ form.nombre }}
+                    </div>
+                    <div class="form-group">
+                        <label>Precio</label>
+                        {{ form.precio }}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Descripción</label>
+                    {{ form.descripcion }}
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-group">
+                        <label>Stock</label>
+                        {{ form.stock }}
+                    </div>
+                    <div class="form-group">
+                        <label>Imagen</label>
+                        {{ form.imagen }}
+                    </div>
+                </div>
+                <button type="submit" class="btn-submit">Guardar Producto</button>
+            </form>
+        </div>
+
+        <h3>Lista de Productos</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Imagen</th>
+                    <th>Nombre</th>
+                    <th>Precio</th>
+                    <th>Stock</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for prod in productos %}
+                <tr>
+                    <td>
+                        {% if prod.imagen %}
+                            <img src="{{ prod.imagen.url }}" alt="{{ prod.nombre }}" style="max-width: 50px; border-radius: 4px;">
+                        {% else %}
+                            N/D
+                        {% endif %}
+                    </td>
+                    <td>{{ prod.nombre }}</td>
+                    <td>${{ prod.precio }}</td>
+                    <td>{{ prod.stock }}</td>
+                    <td>
+                        <button class="btn-submit" style="padding: 0.5rem 1rem; margin-right: 0.5rem;" onclick="abrirModalEditar('{{ prod.id }}', '{{ prod.nombre|escapejs }}', '{{ prod.precio }}', '{{ prod.descripcion|escapejs }}', '{{ prod.stock }}')">Editar</button>
+                        <form method="POST" style="display:inline;" onsubmit="return confirm('¿Seguro que deseas eliminar este producto?');">
+                            {% csrf_token %}
+                            <input type="hidden" name="eliminar" value="1">
+                            <input type="hidden" name="producto_id" value="{{ prod.id }}">
+                            <button type="submit" class="btn-danger">Eliminar</button>
+                        </form>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" style="text-align: center;">No hay productos registrados.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Modal Editar Producto -->
+    <div id="editarModal" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.5); align-items: center; justify-content: center;">
+        <div style="background-color: #fefefe; margin: auto; padding: 2rem; border: 1px solid #888; width: 90%; max-width: 600px; border-radius: 8px; position: relative;">
+            <span onclick="cerrarModal()" style="color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer; position: absolute; right: 20px; top: 10px;">&times;</span>
+            <h2>Editar Producto</h2>
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="hidden" name="editar" value="1">
+                <input type="hidden" name="producto_id" id="edit_producto_id">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-group">
+                        <label>Nombre</label>
+                        <input type="text" name="nombre" id="edit_nombre" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Precio</label>
+                        <input type="number" name="precio" id="edit_precio" class="form-input" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Descripción</label>
+                    <textarea name="descripcion" id="edit_descripcion" class="form-input" rows="3" required></textarea>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-group">
+                        <label>Stock</label>
+                        <input type="number" name="stock" id="edit_stock" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Nueva Imagen (opcional)</label>
+                        <input type="file" name="imagen" class="form-file-input">
+                    </div>
+                </div>
+                <button type="submit" class="btn-submit" style="width: 100%;">Actualizar Producto</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const modal = document.getElementById('editarModal');
+
+        function abrirModalEditar(id, nombre, precio, descripcion, stock) {
+            document.getElementById('edit_producto_id').value = id;
+            document.getElementById('edit_nombre').value = nombre;
+            document.getElementById('edit_precio').value = precio;
+            document.getElementById('edit_descripcion').value = descripcion;
+            document.getElementById('edit_stock').value = stock;
+            modal.style.display = 'flex';
+        }
+
+        function cerrarModal() {
+            modal.style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+    </script>
+</body>
+</html>

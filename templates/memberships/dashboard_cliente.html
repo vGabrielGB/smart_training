@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Suscripción - Smart Training</title>
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --primary-hover: #1d4ed8;
+            --bg-color: #f3f4f6;
+            --card-bg: #ffffff;
+            --text-main: #1f2937;
+            --text-muted: #6b7280;
+            --border-color: #e5e7eb;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0; padding: 2rem;
+            display: flex; justify-content: center;
+        }
+
+        .container { max-width: 600px; width: 100%; }
+        
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+        }
+
+        h1, h2 { margin-top: 0; color: var(--text-main); }
+        
+        .status-badge {
+            display: inline-block; padding: 0.25rem 0.75rem;
+            border-radius: 9999px; font-size: 0.875rem; font-weight: 600;
+            text-transform: uppercase;
+        }
+        .status-activa { background-color: #d1fae5; color: #065f46; }
+        .status-pendiente { background-color: #fef3c7; color: #92400e; }
+
+        .form-group { margin-bottom: 1.5rem; }
+        .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 600; }
+        
+        .form-select, .form-input, .form-file-input {
+            width: 100%; padding: 0.75rem; border: 1px solid var(--border-color);
+            border-radius: 4px; box-sizing: border-box; font-size: 1rem;
+        }
+
+        .btn-submit {
+            background-color: var(--primary-color); color: white;
+            padding: 0.75rem 1.5rem; border: none; border-radius: 4px;
+            font-size: 1rem; cursor: pointer; font-weight: 600;
+            width: 100%; transition: background-color 0.2s;
+        }
+        .btn-submit:hover { background-color: var(--primary-hover); }
+
+        .info-grid {
+            display: grid; grid-template-columns: 1fr 1fr;
+            gap: 1rem; margin-top: 1.5rem;
+        }
+        .info-item { background-color: var(--bg-color); padding: 1rem; border-radius: 4px; }
+        .info-label { font-size: 0.875rem; color: var(--text-muted); margin-bottom: 0.25rem; }
+        .info-value { font-weight: 600; font-size: 1.125rem; }
+        
+        .messages { list-style: none; padding: 0; }
+        .messages li { padding: 1rem; margin-bottom: 1rem; border-radius: 4px; background-color: #d1fae5; color: #065f46; }
+        .messages li.warning { background-color: #fef3c7; color: #92400e; }
+    </style>
+</head>
+<body>
+    {% include 'includes/navbar_cliente.html' %}
+
+    <div class="dashboard-container">
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li class="{{ message.tags }}">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        <div class="card">
+            <h1>Panel de Suscripción</h1>
+            
+            {% if suscripcion %}
+                <h2>Estado: <span class="status-badge status-{{ suscripcion.estado }}">{{ suscripcion.get_estado_display }}</span></h2>
+                
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-label">Plan Contratado</div>
+                        <div class="info-value">{{ suscripcion.plan.nombre }}</div>
+                    </div>
+                    {% if suscripcion.estado == 'activa' %}
+                    <div class="info-item">
+                        <div class="info-label">Vencimiento</div>
+                        <div class="info-value">{{ suscripcion.fecha_fin|date:"d M Y" }}</div>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                {% if suscripcion.estado == 'pendiente' %}
+                <p style="margin-top: 1.5rem; color: var(--text-muted);">
+                    Tu comprobante de pago está siendo verificado. Tendrás acceso total una vez sea aprobado.
+                </p>
+                {% endif %}
+                
+            {% else %}
+                <h2>Reportar Pago de Membresía</h2>
+                <p style="color: var(--text-muted); margin-bottom: 2rem;">No tienes planes activos. Selecciona tu plan y envía el comprobante.</p>
+                
+                <!-- ¡enctype="multipart/form-data" es fundamental para recibir captura_pago! -->
+                <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    <div class="form-group">
+                        <label for="{{ form.plan.id_for_label }}">Plan a Contratar</label>
+                        {{ form.plan }}
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="{{ form.referencia.id_for_label }}">Número de Referencia</label>
+                        {{ form.referencia }}
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="{{ form.banco_origen.id_for_label }}">Banco de Origen</label>
+                        {{ form.banco_origen }}
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="{{ form.captura_pago.id_for_label }}">Captura / Comprobante</label>
+                        {{ form.captura_pago }}
+                    </div>
+                    
+                    <button type="submit" class="btn-submit">Enviar Comprobante</button>
+                </form>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

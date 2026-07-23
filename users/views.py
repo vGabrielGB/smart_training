@@ -32,6 +32,8 @@ def iniciar_sesion(request):
             
             if usuario is not None:
                 login(request, usuario)
+                if getattr(usuario, 'is_manager', False):
+                    return redirect('dashboard_gerente')
                 return redirect('inicio')
     else:
         form = AuthenticationForm()
@@ -40,4 +42,4 @@ def iniciar_sesion(request):
 
 def cerrar_sesion(request):
     logout(request)
-    return redirect('inicio')
+    return redirect('landing')

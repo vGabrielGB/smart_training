@@ -18,12 +18,15 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from memberships.views import inicio
+from memberships.views import inicio, landing_page
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', inicio, name='inicio'),
+    path('', landing_page, name='landing'),
+    path('inicio/', inicio, name='inicio'),
     path('usuarios/', include('users.urls')),
+    path('membresias/', include('memberships.urls')),
+    path('tienda/', include('store.urls')),
 ]
 
 # Esto le permite a Django servir las imágenes de capturas y productos localmente

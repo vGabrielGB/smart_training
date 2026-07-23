@@ -1,0 +1,96 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Tienda - Smart Training</title>
+    <link rel="stylesheet" href="{% static 'css/estilos.css' %}">
+    <style>
+        .tienda-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 2rem; padding: 2rem; }
+        .producto-card { background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); text-align: center; }
+        .producto-img { max-width: 100%; height: 200px; object-fit: cover; border-radius: 4px; margin-bottom: 1rem; }
+        .btn-comprar { background-color: #10b981; color: white; padding: 0.5rem 1rem; border: none; border-radius: 4px; cursor: pointer; width: 100%; font-weight: bold; margin-top: 1rem; }
+        /* Modal Styles */
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.5); align-items: center; justify-content: center; }
+        .modal-content { background-color: #fefefe; margin: auto; padding: 2rem; border: 1px solid #888; width: 90%; max-width: 500px; border-radius: 8px; position: relative; }
+        .close { color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer; position: absolute; right: 20px; top: 10px; }
+        .close:hover, .close:focus { color: black; text-decoration: none; cursor: pointer; }
+        .form-group { margin-bottom: 1.5rem; text-align: left; }
+        .form-group label { display: block; margin-bottom: 0.5rem; font-weight: bold; }
+        .form-input, .form-file-input { width: 100%; padding: 0.75rem; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        .btn-submit { background-color: #2563eb; color: white; padding: 0.75rem 1.5rem; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; width: 100%; }
+        .messages { list-style: none; padding: 0; }
+        .messages li { padding: 1rem; margin-bottom: 1rem; border-radius: 4px; background-color: #d1fae5; color: #065f46; }
+    </style>
+</head>
+<body>
+    {% include 'includes/navbar_cliente.html' %}
+
+    <main style="background-color: #f3f4f6; min-height: 80vh; position: relative;">
+        <h2 style="text-align: center; padding-top: 2rem; margin: 0;">Productos Disponibles</h2>
+        
+        {% if user.is_authenticated and not user.is_manager %}
+        <div style="position: absolute; top: 2rem; right: 2rem;">
+            <a href="{% url 'ver_carrito' %}" style="background-color: #f59e0b; color: white; padding: 0.75rem 1.5rem; text-decoration: none; border-radius: 50px; font-weight: bold; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);">
+                🛒 Ver Carrito ({{ cantidad_carrito }})
+            </a>
+        </div>
+        {% endif %}
+
+        {% if messages %}
+        <div style="padding: 1rem 2rem;">
+            <ul class="messages">
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        <div class="tienda-grid">
+            {% for producto in productos %}
+            <div class="producto-card">
+                {% if producto.imagen %}
+                <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}" class="producto-img">
+                {% endif %}
+                <h3>{{ producto.nombre }}</h3>
+                <p style="color: #6b7280; font-size: 0.9rem;">{{ producto.descripcion }}</p>
+                <p style="font-size: 1.25rem; font-weight: bold; color: #111827;">${{ producto.precio }}</p>
+                
+                {% if user.is_authenticated and not user.is_manager %}
+                    <form action="{% url 'agregar_carrito' producto.id %}" method="POST" style="margin-top: 1rem;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-comprar">Añadir al Carrito</button>
+                    </form>
+                {% elif not user.is_authenticated %}
+                    <button class="btn-comprar" onclick="document.getElementById('loginModal').style.display='flex'">Comprar</button>
+                {% endif %}
+            </div>
+            {% empty %}
+            <p style="text-align:center; grid-column: 1 / -1;">No hay productos disponibles por ahora.</p>
+            {% endfor %}
+        </div>
+
+        {% if not user.is_authenticated %}
+        <div id="loginModal" class="modal">
+            <div class="modal-content" style="text-align: center;">
+                <span class="close" onclick="document.getElementById('loginModal').style.display='none'">&times;</span>
+                <h2>Inicia Sesión</h2>
+                <p>Debes iniciar sesión para comprar en la tienda.</p>
+                <br>
+                <a href="{% url 'login' %}" class="btn-submit" style="text-decoration:none; display:inline-block;">Ingresar</a>
+            </div>
+        </div>
+        {% endif %}
+    </main>
+
+    <script>
+        window.onclick = function(event) {
+            const loginModal = document.getElementById("loginModal");
+            if (event.target == loginModal) {
+                loginModal.style.display = "none";
+            }
+        }
+    </script>
+</body>
+</html>

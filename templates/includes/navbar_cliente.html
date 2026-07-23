@@ -1,0 +1,21 @@
+<header class="header">
+    <nav class="nav-bar">
+        <h1>Smart Training</h1>
+        <ul class="nav-links">
+            <li><a href="{% url 'inicio' %}">Inicio</a></li>
+            <li><a href="{% url 'tienda_inicio' %}">Tienda</a></li>
+            {% if user.is_authenticated %}
+                {% if user.is_manager %}
+                    <li><a href="{% url 'dashboard_gerente' %}">Panel Gerente</a></li>
+                {% else %}
+                    <li><a href="{% url 'dashboard_cliente' %}">Mi Suscripción</a></li>
+                {% endif %}
+                <li><a href="#">Hola, {{ user.username }}</a></li>
+                <li><a href="{% url 'logout' %}">Cerrar Sesión</a></li>
+            {% else %}
+                <li><a href="{% url 'login' %}">Ingresar</a></li>
+                <li><a href="{% url 'registro' %}">Registrarse</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+</header>
